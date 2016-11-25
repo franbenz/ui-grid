@@ -53,7 +53,8 @@ module.exports = function (grunt, options) {
   var currentTag = semver.clean( util.getCurrentTag() );
 
   if (currentTag) {
-    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release', 'gh-pages:ui-grid-site', 'update-bower-json', 'gh-pages:bower', 'npm-publish'];
+    //modified to publish on my own scope @roshkadev
+    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release', 'update-bower-json', 'npm-publish'];
   }
   else {
     baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release', 'gh-pages:ui-grid-site'];
