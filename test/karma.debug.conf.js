@@ -10,35 +10,31 @@ module.exports = function(config) {
     basePath: '../',
 
     // frameworks to use
-    frameworks: ['jasmine2'],
+    frameworks: ['jasmine'],
 
-    // list of files / patterns to load in the browser (we add more dynamically in our tasks)
+    // list of files / patterns to load in the browser
+    // note that the karmangular setup from util.createKarmangularConfig seems
+    // to take precedence over this, but we can't remove this because then
+    // the karmangular task doesn't appear to run.  So includes the features/**/test, but
+    // they don't get run if you've used the --fast or --core options
     files: [
       'bower_components/jquery/jquery.min.js',
       'lib/test/jquery.simulate.js',
       'lib/test/classList.polyFill.js',
       'bower_components/lodash/dist/lodash.min.js',
 
-      'lib/test/angular/1.3.6/angular.js',
-      'lib/test/angular/1.3.6/angular-mocks.js',
-      'lib/test/angular/1.3.6/angular-animate.js',
-
-      'src/js/core/bootstrap.js',
-      'src/js/**/*.js',
-      'src/features/**/js/**/*.js',
-      'test/unit/**/*.spec.js',
-      'src/features/**/test/**/*.spec.js',
+      'packages/core/src/bootstrap.js',
+      'packages/**/src/js/**/*.js',
+      'packages/**/test/**/*.spec.js',
 
       'dist/release/ui-grid.css',
 
-      '.tmp/template.js' //templates
+      '.tmp/template.js' // templates
     ],
-
 
     // list of files to exclude
     exclude: [
     ],
-
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
@@ -46,7 +42,7 @@ module.exports = function(config) {
 
     preprocessors: {
       // Cover source files but ignore any .spec.js files. Thanks goodness I found the pattern here: https://github.com/karma-runner/karma/pull/834#issuecomment-35626132
-      'src/**/!(*.spec)+(.js)': ['coverage']
+      'packages/**/!(*.spec)+(.js)': ['coverage']
     },
 
     coverageReporter: {
@@ -65,7 +61,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
 
 
     // enable / disable watching file and executing tests whenever any file changes
@@ -110,19 +106,19 @@ module.exports = function(config) {
   // TODO(c0bra): remove once SauceLabs supports websockets.
   // This speeds up the capturing a bit, as browsers don't even try to use websocket. -- (thanks vojta)
   if (process.env.TRAVIS) {
-    config.logLevel = config.LOG_INFO;
+    config.logLevel = config.LOG_DEBUG;
     config.browserNoActivityTimeout = 120000; // NOTE: from angular.js, for socket.io buffer
     config.reporters = ['dots', 'coverage'];
 
     var buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')';
 
-    // config.transports = ['websocket', 'xhr-polling'];
+    config.transports = ['websocket', 'polling'];
 
     config.sauceLabs.build = buildLabel;
     config.sauceLabs.startConnect = false;
     config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
 
-    config.transports = ['xhr-polling'];
+    // config.transports = ['xhr-polling'];
 
     // Debug logging into a file, that we print out at the end of the build.
     config.loggers.push({

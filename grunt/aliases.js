@@ -5,12 +5,18 @@ module.exports = function (grunt, options) {
 
     // register before and after test tasks so we don't have to change cli
     // options on the CI server
-    'before-test': ['clean', 'newer:jshint', 'newer:jscs', 'ngtemplates', 'less'], // Have to run less so CSS files are present
+    'before-test': [
+      'clean', 'newer:jshint', 'newer:jscs', 'ngtemplates', 'less', 'copy:font_dist','copy:packages_dist'
+    ], // Have to run less so CSS files are present
     'after-test': ['build'],
     'default': ['before-test', 'test:single', 'after-test'],
 
     // Build with no testing
-    'build': ['ngtemplates', 'concat', 'uglify', 'fontello', 'less', 'ngdocs', 'copy:site', 'copy:less_customizer',],
+    'build': [
+      'ngtemplates', 'concat', 'uglify', 'less', 'uidocs-generator', 'copy:font_dist', 'copy:packages_dist',
+      'copy:site', 'copy:less_customizer',
+    ],
+    'build:less_dist': ['copy:less_dist', 'replace:less_dist'],
 
     // Auto-test tasks for development
     'autotest:unit': ['karmangular:start'],
@@ -36,11 +42,6 @@ module.exports = function (grunt, options) {
     baseTasks['dev'].splice(baseTasks['dev'].indexOf('autotest:unit'), 1);
   }
 
-  if (grunt.option('fontello') === false) {
-    grunt.log.writeln("Skipping fontello...");
-    baseTasks['build'].splice(baseTasks['build'].indexOf('fontello'), 1);
-  }
-
   if (process.env.TRAVIS){
     baseTasks['test:single'] = ['karma:travis'];
   }
@@ -54,10 +55,10 @@ module.exports = function (grunt, options) {
 
   if (currentTag) {
     //modified to publish on my own scope @roshkadev
-    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release', 'update-bower-json', 'npm-publish'];
+    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'build:less_dist', 'cut-release', 'update-bower-json', 'npm-publish'];
   }
   else {
-    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'copy:less_dist', 'cut-release', 'gh-pages:ui-grid-site'];
+    baseTasks['release'] = ['clean', 'ngtemplates', 'build', 'build:less_dist', 'cut-release'];
   }
 
   return baseTasks;

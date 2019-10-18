@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
   <link rel="stylesheet" href="/css/site.css" />
   <link rel="stylesheet" href="//ui-grid.info/release/ui-grid-unstable.min.css" />
+  <link rel="shortcut icon" href="/docs/favicon.ico" />
   <script>
     ((window.gitter = {}).chat = {}).options = {
       room: 'angular-ui/ui-grid'
@@ -38,8 +39,8 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li><a href="/docs/#/api"><i class="fa fa-book fa-fw"></i> API</a></li>
-          <li><a href="/docs/#/tutorial"><i class="fa fa-book fa-fw"></i> Tutorial</a></li>
+          <li><a href="/docs/#!/api"><i class="fa fa-book fa-fw"></i> API</a></li>
+          <li><a href="/docs/#!/tutorial"><i class="fa fa-book fa-fw"></i> Tutorial</a></li>
           <li><a href="/customizer/"><i class="fa fa-wrench fa-fw"></i> Customizer</a></li>
         </ul>
         <div class="navbar-header navbar-right">
@@ -82,7 +83,7 @@
             Download <small>( <%= version %> )</small>
           </a>
 
-          <a class="btn btn-success btn-large" href="/docs/#/tutorial" title="Tutorial">
+          <a class="btn btn-success btn-large" href="/docs/#!/tutorial" title="Tutorial">
             <i class="fa fa-book fa-fw"></i>
             Tutorial
           </a>
@@ -100,7 +101,7 @@
         <br>
         <div class="alert alert-info">
           <h3 class="text-center">
-            UI Grid <strong>v3.0.0</strong> has been released!  Check out the <a class="info-link" href="https://github.com/angular-ui/ui-grid">project on GitHub</a> for more information.
+            UI Grid <strong>v4.0.0</strong> has been released!  Check out the <a class="info-link" href="https://github.com/angular-ui/ui-grid">project on GitHub</a> for more information.
           </h3>
         </div>
       </div>
@@ -117,7 +118,7 @@
           <h4 class="feature-heading">Configurable</h4>
           <ul>
             <li>Customizeable templates</li>
-            <li>Change look and feel with CSS and the <a href="/customizer">customizer</a></li>
+            <li>Change look and feel with CSS and the <a href="/customizer/">customizer</a></li>
             <li>Drop-in plugin system</li>
           </ul>
         </div>
@@ -145,7 +146,7 @@
           </ul>
           <h4 class="feature-heading">Third Party Features</h4>
           <ul>
-            <li><a href="/docs/#/tutorial/299_third_party_features">List of Third Party Features</a></li>
+            <li><a href="/docs/#!/tutorial/498_third_party_features">List of Third Party Features</a></li>
           </ul>
         </div>
       </div>
@@ -158,7 +159,9 @@
           <div class="grid" ui-grid="gridOptionsSimple"></div>
 
           <h4 class="feature-heading">Complex Example</h4>
-          <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns></div>
+          <div class="grid" ui-grid="gridOptionsComplex" ui-grid-edit ui-grid-resize-columns ui-grid-pagination></div>
+          <label>Language: </label>
+          <select ng-options="language for language in languages" ng-model="currentLanguage" ng-change="changeLanguage()"></select>
         </div>
       </div>
     </div>
@@ -179,12 +182,12 @@
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.6/angular-animate.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/<%= latestAngular %>/angular.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/<%= latestAngular %>/angular-animate.js"></script>
   <script src="//ui-grid.info/release/ui-grid-unstable.min.js"></script>
   <script>
-    angular.module('demo', ['ngAnimate', 'ui.grid', 'ui.grid.edit', 'ui.grid.resizeColumns'])
-    .run(function($rootScope, uiGridConstants) {
+    angular.module('demo', ['ngAnimate', 'ui.grid', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pagination'])
+    .run(function($rootScope, uiGridConstants, i18nService) {
       $rootScope.gridOptionsSimple = {
         data: [
           {
@@ -294,6 +297,8 @@
         enableFiltering: true,
         showGridFooter: true,
         showColumnFooter: true,
+        paginationPageSizes: [10, 20, 30],
+        paginationPageSize: 10,
         columnDefs: [
           { name: 'name', aggregationType: uiGridConstants.aggregationTypes.count, width: 150 },
           { name: 'gender', filter: { term: 'male' }, width: 150, enableCellEdit: false,
@@ -454,6 +459,12 @@
               "age": 31
           }
         ]
+      };
+
+      $rootScope.languages = i18nService.getAllLangs();
+      $rootScope.currentLanguage = i18nService.getCurrentLang();
+      $rootScope.changeLanguage = function(){
+          i18nService.setCurrentLang($rootScope.currentLanguage);
       };
     });
   </script>
